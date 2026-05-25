@@ -578,40 +578,41 @@ export default function App() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="absolute inset-0 z-20 overflow-y-auto"
+            className="absolute inset-0 z-20 flex items-center justify-center p-4"
           >
-            <div className="min-h-full flex items-center justify-center p-4">
-            <div className="bg-white/95 backdrop-blur-md p-10 rounded-[32px] shadow-2xl border border-gray-100 max-w-md w-full text-center">
-              <div className="w-20 h-20 bg-emerald-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                <Play className="w-10 h-10 text-[#1ABC9C] fill-[#1ABC9C]" />
-              </div>
-              <h1 className="text-4xl font-display font-bold mb-4 tracking-tight">Word Catcher</h1>
-              <p className="text-gray-500 mb-8 leading-relaxed">
-                Attrape les mots anglais <span className="text-emerald-600 font-semibold">correctement orthographiés</span> et évite les erreurs !
-              </p>
-              
-              <div className="space-y-3 mb-8 text-left bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                <div className="flex items-center gap-3 text-sm text-gray-600">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  <span>Mot correct : +10 points</span>
+            <div className="bg-white p-6 sm:p-8 rounded-[32px] shadow-2xl border border-gray-100 max-w-md w-full max-h-full flex flex-col text-center">
+              {/* Content scrolls if the box is short; the button below stays pinned. */}
+              <div className="overflow-y-auto min-h-0 custom-scrollbar">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-emerald-50 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                  <Play className="w-9 h-9 sm:w-10 sm:h-10 text-[#1ABC9C] fill-[#1ABC9C]" />
                 </div>
-                <div className="flex items-center gap-3 text-sm text-gray-600">
-                  <XCircle className="w-4 h-4 text-red-500" />
-                  <span>Erreur : -1 vie</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm text-gray-600">
-                  <Info className="w-4 h-4 text-emerald-500" />
-                  <span>Utilise ta souris ou ton doigt pour bouger</span>
+                <h1 className="text-3xl sm:text-4xl font-display font-bold mb-3 tracking-tight">Word Catcher</h1>
+                <p className="text-gray-500 mb-5 leading-relaxed">
+                  Attrape les mots anglais <span className="text-emerald-600 font-semibold">correctement orthographiés</span> et évite les erreurs !
+                </p>
+
+                <div className="space-y-2 text-left bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                  <div className="flex items-center gap-3 text-sm text-gray-600">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span>Mot correct : +10 points</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm text-gray-600">
+                    <XCircle className="w-4 h-4 text-red-500 shrink-0" />
+                    <span>Erreur : -1 vie</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm text-gray-600">
+                    <Info className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span>Utilise ta souris ou ton doigt pour bouger</span>
+                  </div>
                 </div>
               </div>
 
-              <button 
+              <button
                 onClick={startGame}
-                className="w-full bg-[#1ABC9C] hover:bg-[#16A085] text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-emerald-100 active:scale-95"
+                className="shrink-0 mt-4 w-full bg-[#1ABC9C] hover:bg-[#16A085] text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-emerald-100 active:scale-95"
               >
                 Commencer à jouer
               </button>
-            </div>
             </div>
           </motion.div>
         )}
@@ -641,49 +642,49 @@ export default function App() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="absolute inset-0 z-20 overflow-y-auto"
+            className="absolute inset-0 z-20 flex items-center justify-center p-4"
           >
-            <div className="min-h-full flex items-center justify-center p-4">
-            <div className="bg-white/95 backdrop-blur-md p-10 rounded-[32px] shadow-2xl border border-gray-100 max-w-md w-full text-center">
-              <div className="text-6xl mb-6">🏁</div>
-              <h2 className="text-4xl font-display font-bold mb-2 tracking-tight">Partie terminée</h2>
-              <p className="text-gray-500 mb-4">Ton score final est de</p>
-              
-              <div className="text-6xl font-display font-black text-[#1ABC9C] mb-6">
-                {score}
+            <div className="bg-white p-6 sm:p-8 rounded-[32px] shadow-2xl border border-gray-100 max-w-md w-full max-h-full flex flex-col text-center">
+              <div className="overflow-y-auto min-h-0 custom-scrollbar">
+                <div className="text-5xl sm:text-6xl mb-4">🏁</div>
+                <h2 className="text-3xl sm:text-4xl font-display font-bold mb-2 tracking-tight">Partie terminée</h2>
+                <p className="text-gray-500 mb-3">Ton score final est de</p>
+
+                <div className="text-5xl sm:text-6xl font-display font-black text-[#1ABC9C] mb-5">
+                  {score}
+                </div>
+
+                {errors.length > 0 && (
+                  <div className="mb-5 text-left">
+                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3 px-1">Récapitulatif des erreurs :</h3>
+                    <div className="bg-red-50 rounded-2xl p-4 border border-red-100 max-h-40 overflow-y-auto custom-scrollbar">
+                      <ul className="space-y-2">
+                        {errors.map((err, idx) => (
+                          <li key={idx} className="flex items-center gap-2 text-sm">
+                            <span className="text-red-500 line-through opacity-50">{err.incorrect}</span>
+                            <span className="text-gray-400">→</span>
+                            <span className="text-emerald-600 font-bold">{err.correct}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+
+                {score >= highScore && score > 0 && (
+                  <div className="bg-yellow-50 text-yellow-700 px-4 py-2 rounded-full text-sm font-bold mb-2 inline-block">
+                    ✨ NOUVEAU RECORD ! ✨
+                  </div>
+                )}
               </div>
 
-              {errors.length > 0 && (
-                <div className="mb-8 text-left">
-                  <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3 px-1">Récapitulatif des erreurs :</h3>
-                  <div className="bg-red-50 rounded-2xl p-4 border border-red-100 max-h-40 overflow-y-auto custom-scrollbar">
-                    <ul className="space-y-2">
-                      {errors.map((err, idx) => (
-                        <li key={idx} className="flex items-center gap-2 text-sm">
-                          <span className="text-red-500 line-through opacity-50">{err.incorrect}</span>
-                          <span className="text-gray-400">→</span>
-                          <span className="text-emerald-600 font-bold">{err.correct}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              )}
-
-              {score >= highScore && score > 0 && (
-                <div className="bg-yellow-50 text-yellow-700 px-4 py-2 rounded-full text-sm font-bold mb-8 inline-block">
-                  ✨ NOUVEAU RECORD ! ✨
-                </div>
-              )}
-
-              <button 
+              <button
                 onClick={startGame}
-                className="w-full bg-[#1ABC9C] hover:bg-[#16A085] text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-emerald-100 flex items-center justify-center gap-2 active:scale-95"
+                className="shrink-0 mt-4 w-full bg-[#1ABC9C] hover:bg-[#16A085] text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-emerald-100 flex items-center justify-center gap-2 active:scale-95"
               >
                 <RotateCcw className="w-5 h-5" />
                 Rejouer
               </button>
-            </div>
             </div>
           </motion.div>
         )}
