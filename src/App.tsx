@@ -45,6 +45,9 @@ const WORD_PAIRS = [
   { correct: 'Vacuum', incorrect: 'Vaccum' },
 ];
 
+// Height of a falling word's box, in logical (CSS) pixels.
+const WORD_BOX_HEIGHT = 36;
+
 // Sound Design Utility
 const audioCtx = typeof window !== 'undefined' ? new (window.AudioContext || (window as any).webkitAudioContext)() : null;
 
@@ -175,6 +178,9 @@ export default function App() {
   const lastSpawnTime = useRef<number>(0);
   const spawnInterval = useRef<number>(2000); // ms
   const baseSpeed = useRef<number>(2);
+  // Logical drawing size in CSS pixels (the canvas buffer may be larger on
+  // high-DPI screens). All game logic works in this coordinate space.
+  const dimsRef = useRef({ w: 800, h: 600 });
 
   const initGame = useCallback(() => {
     setScore(0);
@@ -187,15 +193,13 @@ export default function App() {
     spawnInterval.current = 2000;
     baseSpeed.current = 2;
 
-    if (canvasRef.current) {
-      const canvas = canvasRef.current;
-      playerRef.current = {
-        x: canvas.width / 2 - 40,
-        y: canvas.height - 40,
-        width: 80,
-        height: 20,
-      };
-    }
+    const { w, h } = dimsRef.current;
+    playerRef.current = {
+      x: w / 2 - 40,
+      y: h - 40,
+      width: 80,
+      height: 20,
+    };
   }, []);
 
   const spawnWord = useCallback((canvasWidth: number) => {
@@ -203,8 +207,8 @@ export default function App() {
     const isCorrect = Math.random() > 0.4; // 60% chance for correct word
     const text = isCorrect ? pair.correct : pair.incorrect;
     
-    // Estimate width based on text length
-    const width = text.length * 12 + 20;
+    // Estimate width based on text length (matches the 18px font above).
+    const width = text.length * 13 + 24;
     const x = Math.random() * (canvasWidth - width);
     
     const newWord: FallingWord = {
@@ -229,17 +233,24 @@ export default function App() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const { w: W, h: H } = dimsRef.current;
+    // Draw in CSS-pixel coordinates; the buffer is scaled by the device pixel
+    // ratio so text stays crisp on high-DPI (Retina) screens.
+    const dpr = canvas.width / W || 1;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // Update player position (Arrow keys)
+    // Clear canvas
+    ctx.clearRect(0, 0, W, H);
+
+    // Keep the paddle resting on the floor (handles container resizes).
     const player = playerRef.current;
+    player.y = H - 40;
     const moveSpeed = 10;
     if (keysRef.current['ArrowLeft']) {
       player.x = Math.max(0, player.x - moveSpeed);
     }
     if (keysRef.current['ArrowRight']) {
-      player.x = Math.min(canvas.width - player.width, player.x + moveSpeed);
+      player.x = Math.min(W - player.width, player.x + moveSpeed);
     }
 
     // Draw player (a nice rounded paddle/basket)
@@ -256,7 +267,7 @@ export default function App() {
 
     // Spawn words
     if (time - lastSpawnTime.current > spawnInterval.current) {
-      spawnWord(canvas.width);
+      spawnWord(W);
       lastSpawnTime.current = time;
       // Gradually increase difficulty
       spawnInterval.current = Math.max(800, spawnInterval.current * 0.99);
@@ -273,19 +284,19 @@ export default function App() {
       ctx.shadowColor = 'rgba(0,0,0,0.1)';
       ctx.fillStyle = '#FEF0C8'; // Requested Word Box Color
       ctx.beginPath();
-      ctx.roundRect(word.x, word.y, word.width, 30, 8);
+      ctx.roundRect(word.x, word.y, word.width, WORD_BOX_HEIGHT, 8);
       ctx.fill();
       ctx.shadowBlur = 0;
 
       // Draw word text
       ctx.fillStyle = '#1A1A1A';
-      ctx.font = '600 16px Inter';
+      ctx.font = '600 18px Inter';
       ctx.textAlign = 'center';
-      ctx.fillText(word.text, word.x + word.width / 2, word.y + 20);
+      ctx.fillText(word.text, word.x + word.width / 2, word.y + 24);
 
       // Collision detection
       if (
-        word.y + 30 > player.y &&
+        word.y + WORD_BOX_HEIGHT > player.y &&
         word.y < player.y + player.height &&
         word.x + word.width > player.x &&
         word.x < player.x + player.width
@@ -323,7 +334,7 @@ export default function App() {
       }
 
       // Remove words that fall off screen
-      if (word.y > canvas.height) {
+      if (word.y > H) {
         if (word.isCorrect) {
           // Missed a correct word! Penalty.
           playSound('buzz');
@@ -335,7 +346,7 @@ export default function App() {
           feedbacksRef.current.push({
             id: Date.now(),
             x: word.x + word.width / 2,
-            y: canvas.height - 40,
+            y: H - 40,
             isCorrect: false,
             life: 1.0
           });
@@ -354,7 +365,7 @@ export default function App() {
           feedbacksRef.current.push({
             id: Date.now(),
             x: word.x + word.width / 2,
-            y: canvas.height - 40,
+            y: H - 40,
             isCorrect: true,
             life: 1.0
           });
@@ -425,6 +436,33 @@ export default function App() {
     };
   }, []);
 
+  // Responsive canvas: the drawing buffer tracks the element's displayed size
+  // (× devicePixelRatio for sharpness). Without this the canvas renders at a
+  // fixed 800×600 and gets scaled down on mobile, shrinking the text. Display
+  // size is driven by CSS, so resizing the buffer never feeds back into layout.
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const applySize = () => {
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      const dpr = window.devicePixelRatio || 1;
+      dimsRef.current = { w: rect.width, h: rect.height };
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      // Re-seat the paddle on the new floor and within the new width.
+      const player = playerRef.current;
+      player.y = rect.height - player.height - 20;
+      player.x = Math.max(0, Math.min(rect.width - player.width, player.x));
+    };
+
+    applySize();
+    const ro = new ResizeObserver(applySize);
+    ro.observe(canvas);
+    return () => ro.disconnect();
+  }, []);
+
   // Pointer control (mouse + touch + pen): the paddle follows the pointer.
   // This is what makes the game playable on mobile. The canvas has
   // `touch-action: none`, so dragging on it never scrolls the article.
@@ -435,11 +473,9 @@ export default function App() {
     const movePaddleTo = (clientX: number) => {
       const player = playerRef.current;
       const rect = canvas.getBoundingClientRect();
-      // Map screen coordinates to the canvas' internal resolution (it is
-      // displayed scaled via max-w/max-h).
-      const scaleX = canvas.width / rect.width;
-      const x = (clientX - rect.left) * scaleX - player.width / 2;
-      player.x = Math.max(0, Math.min(canvas.width - player.width, x));
+      // Logical space equals CSS pixels, so map the pointer directly.
+      const x = clientX - rect.left - player.width / 2;
+      player.x = Math.max(0, Math.min(dimsRef.current.w - player.width, x));
     };
 
     const handlePointerMove = (e: PointerEvent) => {

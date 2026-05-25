@@ -42,5 +42,5 @@
 }
 
 canvas {
-  @apply max-w-full max-h-full shadow-2xl rounded-2xl bg-white border border-[#E5E7EB];
+  @apply w-full h-full shadow-2xl rounded-2xl bg-white border border-[#E5E7EB];
 }
