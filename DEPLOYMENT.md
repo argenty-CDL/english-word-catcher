@@ -68,16 +68,16 @@ Ouvre la démo pour vérifier. La console affiche les événements `dataLayer` e
 2. Colle (remplace `TON-PSEUDO` par ton pseudo GitHub) :
 
 ```html
-<div style="width:100%;max-width:840px;margin:0 auto;aspect-ratio:4/3;">
-  <word-catcher style="display:block;width:100%;height:100%;"></word-catcher>
-</div>
+<word-catcher></word-catcher>
 <script src="https://TON-PSEUDO.github.io/english-word-catcher/word-catcher.js" defer></script>
 ```
 
 3. **Save & Close**, puis **Publish**.
 
-Le `aspect-ratio:4/3` correspond au canvas 800×600 du jeu. Ajuste `max-width`
-selon la largeur de ta colonne d'article.
+Le composant se dimensionne lui-même : largeur 100 % (plafonnée à 840 px, centrée)
+et hauteur adaptée (`clamp(480px, 80vh, 620px)`) pour que tout l'écran d'accueil
+tienne sur mobile. **N'ajoute pas** de wrapper avec `aspect-ratio` ou `height`
+autour : ça écraserait ce dimensionnement et réintroduirait le cadre trop court.
 
 ---
 

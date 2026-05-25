@@ -7,6 +7,17 @@
   --font-display: "Outfit", sans-serif;
 }
 
+/* The web component sizes itself: enough height for the full start card
+   (rules + button) on mobile, capped on large screens. This makes the embed
+   work without depending on a wrapper's height in the host page. */
+:host {
+  display: block;
+  width: 100%;
+  max-width: 840px;
+  height: clamp(480px, 80vh, 620px);
+  margin-inline: auto;
+}
+
 /* Full height for the standalone (dev) build. The embedded web component sizes
    its own host, so these rules only matter for index.html. */
 @layer base {

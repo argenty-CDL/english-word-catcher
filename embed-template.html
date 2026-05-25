@@ -12,27 +12,18 @@
         background: #f5f5f4;
         color: #1a1a1a;
       }
-      .demo-wrap {
-        width: 100%;
-        max-width: 840px;
-        margin: 0 auto;
-        aspect-ratio: 4 / 3;
-      }
-      word-catcher {
-        display: block;
-        width: 100%;
-        height: 100%;
-      }
     </style>
   </head>
   <body>
     <h1>English Word Catcher</h1>
     <p>Page de démonstration / test. Le bloc à coller dans Webflow est ci-dessous.</p>
+    <p style="color:#888">
+      Le composant se dimensionne lui-même (hauteur adaptée au mobile) : pas besoin
+      de wrapper ni de styles autour.
+    </p>
 
     <!-- ===== À COPIER DANS LE BLOC EMBED WEBFLOW ===== -->
-    <div class="demo-wrap">
-      <word-catcher></word-catcher>
-    </div>
+    <word-catcher></word-catcher>
     <script src="./word-catcher.js" defer></script>
     <!-- ===== FIN DU BLOC ===== -->
 
