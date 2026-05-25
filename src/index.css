@@ -14,7 +14,10 @@
   display: block;
   width: 100%;
   max-width: 840px;
-  height: clamp(480px, 80vh, 620px);
+  /* !important defeats a leftover inline `height:100%` on the host element
+     (e.g. an old Webflow embed wrapper), which would otherwise collapse the
+     game and clip the rules. Guarantees a tall-enough box regardless. */
+  height: clamp(480px, 80vh, 620px) !important;
   margin-inline: auto;
 }
 
