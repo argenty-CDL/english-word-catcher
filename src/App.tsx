@@ -537,7 +537,7 @@ export default function App() {
   }, [gameState, score, errors.length]);
 
   return (
-    <div ref={containerRef} tabIndex={0} className="game-container bg-[#FDFCFB] outline-none">
+    <div ref={containerRef} tabIndex={0} className="game-container bg-[#FDFCFB] outline-none overflow-hidden">
       {/* Header Stats */}
       <div className="absolute top-8 left-0 right-0 flex justify-between px-8 max-w-4xl mx-auto w-full z-10">
         <div className="flex items-center gap-6">
@@ -578,8 +578,9 @@ export default function App() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="absolute inset-0 flex items-center justify-center z-20 p-4"
+            className="absolute inset-0 z-20 overflow-y-auto"
           >
+            <div className="min-h-full flex items-center justify-center p-4">
             <div className="bg-white/95 backdrop-blur-md p-10 rounded-[32px] shadow-2xl border border-gray-100 max-w-md w-full text-center">
               <div className="w-20 h-20 bg-emerald-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
                 <Play className="w-10 h-10 text-[#1ABC9C] fill-[#1ABC9C]" />
@@ -611,6 +612,7 @@ export default function App() {
                 Commencer à jouer
               </button>
             </div>
+            </div>
           </motion.div>
         )}
 
@@ -639,8 +641,9 @@ export default function App() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="absolute inset-0 flex items-center justify-center z-20 p-4"
+            className="absolute inset-0 z-20 overflow-y-auto"
           >
+            <div className="min-h-full flex items-center justify-center p-4">
             <div className="bg-white/95 backdrop-blur-md p-10 rounded-[32px] shadow-2xl border border-gray-100 max-w-md w-full text-center">
               <div className="text-6xl mb-6">🏁</div>
               <h2 className="text-4xl font-display font-bold mb-2 tracking-tight">Partie terminée</h2>
@@ -680,6 +683,7 @@ export default function App() {
                 <RotateCcw className="w-5 h-5" />
                 Rejouer
               </button>
+            </div>
             </div>
           </motion.div>
         )}
